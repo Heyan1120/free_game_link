@@ -1,33 +1,38 @@
 <script>
 window.onload = function() {
-    // --- 1. 定義遊戲清單 (JSON 格式) ---
-    // 💡 建議一律使用「小寫」當 Key，以後新增遊戲只要照格式加在下面即可
     const gameMap = {
         "eworlds": "https://store.steampowered.com/app/2513440/eWorlds/",
         "ninehells": "https://store.steampowered.com/app/2860410/NineHells/"
     };
 
-    // --- 2. 從網址抓取參數 ---
     const urlParams = new URLSearchParams(window.location.search);
     const rawKey = urlParams.get('g');
-    
-    // 💡 小優化：自動把使用者輸入的參數轉成小寫，避免大小寫不匹配
     const gameKey = rawKey ? rawKey.toLowerCase() : null;
-
-    // --- 3. 取得對應連結 ---
-    // 如果找不到遊戲，跳轉到你的蝦皮分潤主頁（或其他你指定的頁面）
     const targetGame = gameMap[gameKey] || "https://s.shopee.tw/9Ke9GrTOWz"; 
 
-    // --- 4. 背景植入 Cookie (核心分潤邏輯) ---
+    // --- 核心優化：監聽 iframe 加載 ---
     var frame = document.createElement('iframe');
     frame.style.display = 'none';
     frame.src = "https://s.shopee.tw/9Ke9GrTOWz"; 
-    document.body.appendChild(frame);
+    
+    // 當 iframe 載入完成（或出錯）後，才觸發跳轉計時
+    frame.onload = function() {
+        console.log("Cookie 植入站點載入完成");
+        startJump();
+    };
+    
+    // 防呆：萬一蝦皮掛了，3秒後還是強制跳轉
+    var fallback = setTimeout(startJump, 3000);
 
-    // --- 5. 隨機延遲後跳轉 (模擬真人讀取) ---
-    var delay = Math.floor(Math.random() * 800) + 1200;
-    setTimeout(function() {
-        window.location.href = targetGame;
-    }, delay);
+    function startJump() {
+        clearTimeout(fallback); // 清除防呆計時
+        var delay = Math.floor(Math.random() * 500) + 800; // 稍微縮短延遲，提升體驗
+        setTimeout(function() {
+            window.location.href = targetGame;
+        }, delay);
+    }
+
+    document.body.appendChild(frame);
+};
 };
 </script>
