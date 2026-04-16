@@ -1,38 +1,32 @@
-<script>
-window.onload = function() {
-    const gameMap = {
-        "eworlds": "https://store.steampowered.com/app/2513440/eWorlds/",
-        "ninehells": "https://store.steampowered.com/app/2860410/NineHells/"
-    };
+<body>
+    <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
+        <h2>正在跳轉至 Steam 商店...</h2>
+        <p>請稍候，即將為您開啟遊戲頁面</p>
+    </div>
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const rawKey = urlParams.get('g');
-    const gameKey = rawKey ? rawKey.toLowerCase() : null;
-    const targetGame = gameMap[gameKey] || "https://s.shopee.tw/9Ke9GrTOWz"; 
+    <script>
+    window.onload = function() {
+        const gameMap = {
+            "eworlds": "https://store.steampowered.com/app/2513440/eWorlds/",
+            "ninehells": "https://store.steampowered.com/app/2860410/NineHells/"
+        };
 
-    // --- 核心優化：監聽 iframe 加載 ---
-    var frame = document.createElement('iframe');
-    frame.style.display = 'none';
-    frame.src = "https://s.shopee.tw/9Ke9GrTOWz"; 
-    
-    // 當 iframe 載入完成（或出錯）後，才觸發跳轉計時
-    frame.onload = function() {
-        console.log("Cookie 植入站點載入完成");
-        startJump();
-    };
-    
-    // 防呆：萬一蝦皮掛了，3秒後還是強制跳轉
-    var fallback = setTimeout(startJump, 3000);
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameKey = urlParams.get('g')?.toLowerCase();
+        const targetGame = gameMap[gameKey] || "https://s.shopee.tw/9Ke9GrTOWz"; 
 
-    function startJump() {
-        clearTimeout(fallback); // 清除防呆計時
-        var delay = Math.floor(Math.random() * 500) + 800; // 稍微縮短延遲，提升體驗
+        // 1. 先啟動計時器，確保不管蝦皮多慢，最後一定會跳轉
         setTimeout(function() {
             window.location.href = targetGame;
-        }, delay);
-    }
+        }, 1500); // 1.5 秒後準時跳走
 
-    document.body.appendChild(frame);
-};
-};
-</script>
+        // 2. 使用非同步方式載入 iframe，不阻塞主執行緒
+        setTimeout(function() {
+            var frame = document.createElement('iframe');
+            frame.style.display = 'none';
+            frame.src = "https://s.shopee.tw/9Ke9GrTOWz"; 
+            document.body.appendChild(frame);
+        }, 0); 
+    };
+    </script>
+</body>
