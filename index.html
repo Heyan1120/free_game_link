@@ -1,24 +1,29 @@
 <script>
 window.onload = function() {
     // --- 1. 定義遊戲清單 (JSON 格式) ---
+    // 💡 建議一律使用「小寫」當 Key，以後新增遊戲只要照格式加在下面即可
     const gameMap = {
         "eworlds": "https://store.steampowered.com/app/2513440/eWorlds/"
     };
 
-    // --- 2. 從網址抓取參數 (例如 ?g=eworlds) ---
+    // --- 2. 從網址抓取參數 ---
     const urlParams = new URLSearchParams(window.location.search);
-    const gameKey = urlParams.get('g');
+    const rawKey = urlParams.get('g');
+    
+    // 💡 小優化：自動把使用者輸入的參數轉成小寫，避免大小寫不匹配
+    const gameKey = rawKey ? rawKey.toLowerCase() : null;
 
-    // --- 3. 取得對應連結，若無則回首頁 ---
-    const targetGame = gameMap[gameKey] || "https://shopee.tw"; 
+    // --- 3. 取得對應連結 ---
+    // 如果找不到遊戲，跳轉到你的蝦皮分潤主頁（或其他你指定的頁面）
+    const targetGame = gameMap[gameKey] || "https://s.shopee.tw/2BAUftkV1p"; 
 
-    // --- 4. 背景植入 Cookie ---
+    // --- 4. 背景植入 Cookie (核心分潤邏輯) ---
     var frame = document.createElement('iframe');
     frame.style.display = 'none';
-    frame.src = "https://s.shopee.tw/2BAUftkV1p"; // 你的分潤短網址
+    frame.src = "https://s.shopee.tw/2BAUftkV1p"; 
     document.body.appendChild(frame);
 
-    // --- 5. 隨機延遲後跳轉 ---
+    // --- 5. 隨機延遲後跳轉 (模擬真人讀取) ---
     var delay = Math.floor(Math.random() * 800) + 1200;
     setTimeout(function() {
         window.location.href = targetGame;
