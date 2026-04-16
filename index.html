@@ -1,0 +1,27 @@
+<script>
+window.onload = function() {
+    // --- 1. 定義遊戲清單 (JSON 格式) ---
+    const gameMap = {
+        "eworlds": "https://store.steampowered.com/app/2513440/eWorlds/"
+    };
+
+    // --- 2. 從網址抓取參數 (例如 ?g=eworlds) ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameKey = urlParams.get('g');
+
+    // --- 3. 取得對應連結，若無則回首頁 ---
+    const targetGame = gameMap[gameKey] || "https://shopee.tw"; 
+
+    // --- 4. 背景植入 Cookie ---
+    var frame = document.createElement('iframe');
+    frame.style.display = 'none';
+    frame.src = "https://s.shopee.tw/2BAUftkV1p"; // 你的分潤短網址
+    document.body.appendChild(frame);
+
+    // --- 5. 隨機延遲後跳轉 ---
+    var delay = Math.floor(Math.random() * 800) + 1200;
+    setTimeout(function() {
+        window.location.href = targetGame;
+    }, delay);
+};
+</script>
