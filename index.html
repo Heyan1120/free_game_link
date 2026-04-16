@@ -6,27 +6,25 @@
 
     <script>
     window.onload = function() {
-        const gameMap = {
-            "eworlds": "https://store.steampowered.com/app/2513440/eWorlds/",
-            "ninehells": "https://store.steampowered.com/app/2860410/NineHells/"
-        };
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const gameKey = urlParams.get('g')?.toLowerCase();
-        const targetGame = gameMap[gameKey] || "https://s.shopee.tw/9Ke9GrTOWz"; 
-
-        // 1. 先啟動計時器，確保不管蝦皮多慢，最後一定會跳轉
-        setTimeout(function() {
-            window.location.href = targetGame;
-        }, 1500); // 1.5 秒後準時跳走
-
-        // 2. 使用非同步方式載入 iframe，不阻塞主執行緒
-        setTimeout(function() {
-            var frame = document.createElement('iframe');
-            frame.style.display = 'none';
-            frame.src = "https://s.shopee.tw/9Ke9GrTOWz"; 
-            document.body.appendChild(frame);
-        }, 0); 
+    const gameMap = {
+        "eworlds": "https://store.steampowered.com/app/2513440/eWorlds/",
+        "ninehells": "https://store.steampowered.com/app/2860410/NineHells/"
     };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameKey = urlParams.get('g')?.toLowerCase();
+    const targetGame = gameMap[gameKey] || "https://s.shopee.tw/9Ke9GrTOWz"; 
+
+    // --- 核心改動：改用隱形圖片 (Image) 代替 iframe ---
+    // 圖片加載通常比 iframe 快，且不容易被瀏覽器攔截
+    var img = new Image();
+    img.src = "https://s.shopee.tw/9Ke9GrTOWz"; 
+
+    // 只要圖片開始加載，Cookie 通常就會種下
+    // 設定一個保險的延遲時間後跳轉
+    setTimeout(function() {
+        window.location.href = targetGame;
+    }, 1500); // 這裡固定 1.5 秒，給足夠時間跑背景
+};
     </script>
 </body>
